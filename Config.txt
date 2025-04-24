@@ -1,0 +1,8 @@
+const firebaseConfig = {
+  apiKey: "AIzaSyCSQziwY30n4K4LKKphRc_KS4rn6ek0Y5Y",
+  authDomain: "designcore-ce5a2.firebaseapp.com",
+  projectId: "designcore-ce5a2",
+  storageBucket: "designcore-ce5a2.firebasestorage.app",
+  messagingSenderId: "462033201661",
+  appId: "1:462033201661:web:4e9a3f358c389385b8d194"
+};

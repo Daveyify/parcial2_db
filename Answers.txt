@@ -1,0 +1,21 @@
+1. It's practical because it's easier to make more efficient specific queries, because they are all into exact collection, for example if I want to check all the assigned tasks in one project I can do it easier with this structure. It's inefficient when querying tasks by user because you have to make a combined query where you have to access to all the seed (all the teams and projects) and look for the user inside the multiple task documents, which make longer this process. 
+
+4. 
+
+a. It's a complex query, Firestore requires a created index with the requested fields to ensure the exact query and the data accuracy. 
+
+b. The required composite index is:
+
+On the corresponding team...
+
+assignedTo - Ascending
+priority - Ascending
+status - Ascending
+createdAt - Ascending
+
+c. Yes, the same index can be reused for other queries in the same team that use the same fields in the same order.
+
+
+6. My possible solution is to use the following route instead: `/Teams/Users/Tasks/`, including the same fields as the original, but with an additional one named project, which would represent the name of the project. This way, you can directly check a user's tasks within a team, and it also makes it easier to identify which project each task belongs to.
+
+The main disadvantage is that users might make mistakes when entering the project name, which could cause issues when trying to search for a specific project.

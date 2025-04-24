@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Firebase Web</title>
+</head>
+
+<body>
+    <a href="queries.html"> Query</a>
+
+    <div>
+        <h1>Get seed task</h1>
+
+        <label for="getTeamId">Team ID:</label>
+        <input type="text" id="getTeamId" placeholder="team1"><br><br>
+
+        <label for="getProjectId">Project ID:</label>
+        <input type="text" id="getProjectId" placeholder="project1"><br><br>
+
+        <label for="getTaskId">Task ID:</label>
+        <input type="text" id="getTaskId" placeholder="task1"><br><br>
+
+        <button id="getSeedBtn">Get seed task</button>
+    </div>
+
+    <div>
+        <h1>Show all documents in console</h1>
+        <button id="loadDataBtn">Show</button>
+    </div>
+
+    <div>
+        <h1>Add task to the database</h1>
+
+        <label for="taskId">Task Id:</label>
+        <input type="text" id="taskId" placeholder="Ej: 10002"><br><br>
+
+        <label for="assignedTo">Assigned To:</label>
+        <input type="text" id="assignedTo" placeholder="Ej: David Suancha"><br><br>
+
+        <label for="priority">Priority:</label>
+        <input type="text" id="priority" placeholder="Ej: High or Low"><br><br>
+
+        <label for="status">Status:</label>
+        <input type="text" id="status" placeholder="Ej: Done or Pending"><br><br>
+
+        <label for="createdAt">Created At:</label>
+        <input type="datetime-local" id="createdAt" placeholder="Ej: 18"><br><br>
+
+        <button id="addTask">Add Task</button>
+    </div>
+
+    <div>
+        <h1>Get user critical tasks:</h1>
+
+        <label for="getTeamId">Team ID:</label>
+        <input type="text" id="getTeamId" placeholder="team1"><br><br>
+        <label for="getUserId">User Name:</label>
+        <input type="text" id="getUserId" placeholder="David Hernández"><br><br>
+
+        <button id="getUserCriticalTask">Get tasks</button>
+    </div>
+
+    <div>
+        <h1>Get high-priority pending tasks in a team:</h1>
+
+        <label for="getTeamId">Team ID:</label>
+        <input type="text" id="getTeamId" placeholder="team1"><br><br>
+
+        <button id="getHighPriority">Get tasks</button>
+    </div>
+
+
+    <script type="module">
+        import { FirestoreService } from './modules/firestore_service.js';
+        import { FirestoreQuery } from './modules/firestore_query.js';
+
+
+        let firestoreS = null
+        let firestoreQ = null
+
+        let projectId = '';
+        let taskId = '';
+
+        document.getElementById("getSeedBtn").addEventListener("click", async () => {
+            const teamId = document.getElementById("getTeamId").value.trim();
+            projectId = document.getElementById("getProjectId").value.trim();
+            taskId = document.getElementById("getTaskId").value.trim();
+
+            firestoreS = new FirestoreService(`/${teamId}/${projectId}/${taskId}/`);
+            firestoreQ = new FirestoreQuery(`/${teamId}/${projectId}/${taskId}/`);
+            console.log(firestoreS);
+        });
+
+        document.getElementById("loadDataBtn").addEventListener("click", async () => {
+            const docs = await firestoreS.getAllDocuments();
+            console.log("Obtained Docs:", docs);
+        });
+
+        document.getElementById("addTask").addEventListener("click", async () => {
+            const taskId = document.getElementById("taskId").value.trim();
+            const assignedTo = document.getElementById("assignedTo").value.trim();
+            const priority = document.getElementById("priority").value.trim();
+            const status = document.getElementById("status").value.trim();
+            const createdAt = document.getElementById("createdAt").value;
+
+            const data = {
+                assignedTo,
+                priority,
+                status,
+                createdAt
+            };
+
+            await firestoreS.PostDocument(taskId, data);
+        });
+
+        document.getElementById("getUserCriticalTask").addEventListener("click", async () => {
+            const teamId = document.getElementById("getTeamId").value.trim();
+            const userId = document.getElementById("getUserId").value.trim();
+
+            firestoreQ = new FirestoreQuery(`/${teamId}/${projectId}/${taskId}/`);
+
+            const tasks = await firestoreQ.getUserCriticalTasks(teamId, userId);
+            console.log(tasks);
+        });
+
+        document.getElementById("getHighPriority").addEventListener("click", async () => {
+            const teamId = document.getElementById("getTeamId").value.trim();
+
+            firestoreQ = new FirestoreQuery(`/${teamId}/${projectId}/${taskId}/`);
+
+            const tasks = await firestoreQ.getCriticalTasks(teamId);
+            console.log(tasks);
+        });
+
+
+    </script>
+</body>
+
+</html>
